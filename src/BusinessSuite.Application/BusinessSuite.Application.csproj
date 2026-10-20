@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../BusinessSuite.Domain/BusinessSuite.Domain.csproj" />
+    <ProjectReference Include="../BusinessSuite.Contracts/BusinessSuite.Contracts.csproj" />
+    <ProjectReference Include="../../../Framework/src/Framework.Application.Abstractions/Framework.Application.Abstractions.csproj" />
+    <ProjectReference Include="../../../AI-Framework/src/AIFramework.Core/AIFramework.Core.csproj" />
+  </ItemGroup>
+</Project>

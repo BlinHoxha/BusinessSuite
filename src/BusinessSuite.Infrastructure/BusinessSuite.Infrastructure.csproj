@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../BusinessSuite.Application/BusinessSuite.Application.csproj" />
+    <ProjectReference Include="../../../Framework/src/Framework.Persistence.PostgreSql/Framework.Persistence.PostgreSql.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

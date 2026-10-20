@@ -1,0 +1,52 @@
+name: Backend validation
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: BusinessSuite
+      - name: Check Framework repository configuration
+        env:
+          FRAMEWORK_REPOSITORY: ${{ vars.FRAMEWORK_REPOSITORY }}
+          FRAMEWORK_REF: ${{ vars.FRAMEWORK_REF }}
+        run: |
+          test -n "$FRAMEWORK_REPOSITORY" || { echo 'Set FRAMEWORK_REPOSITORY to owner/repository.'; exit 1; }
+          test -n "$FRAMEWORK_REF" || { echo 'Set FRAMEWORK_REF to a reviewed commit or tag.'; exit 1; }
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.FRAMEWORK_REPOSITORY }}
+          ref: ${{ vars.FRAMEWORK_REF }}
+          token: ${{ secrets.FRAMEWORK_READ_TOKEN || github.token }}
+          path: Framework
+      - name: Check AI-Framework repository configuration
+        env:
+          AI_REPOSITORY: ${{ vars.AI_FRAMEWORK_REPOSITORY }}
+          AI_REF: ${{ vars.AI_FRAMEWORK_REF }}
+        run: |
+          test -n "$AI_REPOSITORY" || { echo 'Set AI_FRAMEWORK_REPOSITORY to owner/repository.'; exit 1; }
+          test -n "$AI_REF" || { echo 'Set AI_FRAMEWORK_REF to a reviewed commit or tag.'; exit 1; }
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.AI_FRAMEWORK_REPOSITORY }}
+          ref: ${{ vars.AI_FRAMEWORK_REF }}
+          token: ${{ secrets.AI_FRAMEWORK_READ_TOKEN || github.token }}
+          path: AI-Framework
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Build, test and verify migration
+        shell: pwsh
+        run: ./BusinessSuite/scripts/verify.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backend-validation
+          path: |
+            BusinessSuite/.artifacts/migrations.sql
+            BusinessSuite/tests/**/TestResults/*.trx
